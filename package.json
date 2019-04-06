@@ -22,5 +22,9 @@
         "sass-loader": "^7.1.0",
         "vue": "^2.5.17",
         "vue-template-compiler": "^2.6.10"
+    },
+    "dependencies": {
+        "laravel-echo": "^1.5.3",
+        "pusher-js": "^4.4.0"
     }
 }
