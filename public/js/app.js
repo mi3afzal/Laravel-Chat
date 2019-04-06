@@ -1817,6 +1817,9 @@ __webpack_require__.r(__webpack_exports__);
       body: null
     };
   },
+  mounted: function mounted() {
+    console.log('ChatFormComponent mounted.');
+  },
   methods: {
     typing: function typing(e) {
       if (e.keyCode === 13 && !e.shiftKey) {
@@ -1883,6 +1886,7 @@ __webpack_require__.r(__webpack_exports__);
   mounted: function mounted() {
     var _this = this;
 
+    console.log('ChatMessagesComponent mounted.');
     axios.get('/message').then(function (response) {
       console.log(response.data);
       _this.messages = response.data;
@@ -1938,6 +1942,7 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _event_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../event.js */ "./resources/js/event.js");
 //
 //
 //
@@ -1951,9 +1956,26 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+
 /* harmony default export */ __webpack_exports__["default"] = ({
+  data: function data() {
+    return {
+      users: []
+    };
+  },
   mounted: function mounted() {
+    var _this = this;
+
     console.log('UserComponent mounted.');
+    _event_js__WEBPACK_IMPORTED_MODULE_0__["default"].$on('users.here', function (users) {
+      _this.users = users;
+    }).$on('users.joined', function (user) {
+      _this.users.unshift(user);
+    }).$on('users.left', function (user) {
+      _this.users = _this.users.filter(function (u) {
+        return u.id != user.id;
+      });
+    });
   }
 });
 
@@ -48092,26 +48114,24 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _vm._m(0)
-}
-var staticRenderFns = [
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "col-md-4" }, [
-      _c("div", { staticClass: "card" }, [
-        _c("div", { staticClass: "card-header" }, [_vm._v("Users")]),
-        _vm._v(" "),
-        _c("div", { staticClass: "card-body" }, [
-          _c("div", { staticClass: "users" }, [
-            _c("a", { attrs: { href: "#" } }, [_vm._v("Krunal")])
+  return _c("div", { staticClass: "col-md-4" }, [
+    _c("div", { staticClass: "card" }, [
+      _c("div", { staticClass: "card-header" }, [_vm._v("Users")]),
+      _vm._v(" "),
+      _c(
+        "div",
+        { staticClass: "card-body" },
+        _vm._l(_vm.users, function(user) {
+          return _c("div", { key: user.id, staticClass: "users" }, [
+            _c("a", { attrs: { href: "#" } }, [_vm._v(_vm._s(user.name))])
           ])
-        ])
-      ])
+        }),
+        0
+      )
     ])
-  }
-]
+  ])
+}
+var staticRenderFns = []
 render._withStripped = true
 
 
@@ -60343,6 +60363,14 @@ if (token) {
 } else {
   console.error("CSRF token not found: https://laravel.com/docs/csrf#csrf-x-csrf-token");
 }
+
+var base_url = document.head.querySelector('meta[name="base-url"]');
+
+if (base_url) {
+  window.axios.defaults.baseURL = base_url.content;
+} else {
+  console.error("Base Url not found.");
+}
 /**
  * Echo exposes an expressive API for subscribing to channels and listening
  * for events that are broadcast by Laravel. Echo and event broadcasting
@@ -60358,6 +60386,8 @@ window.Echo = new laravel_echo__WEBPACK_IMPORTED_MODULE_0__["default"]({
   cluster: "mt1",
   encrypted: true
 });
+
+__webpack_require__(/*! ./echo */ "./resources/js/echo.js");
 
 /***/ }),
 
@@ -60775,6 +60805,33 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_UserComponent_vue_vue_type_template_id_7f050fd2___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
 
 
+
+/***/ }),
+
+/***/ "./resources/js/echo.js":
+/*!******************************!*\
+  !*** ./resources/js/echo.js ***!
+  \******************************/
+/*! no exports provided */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _event__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./event */ "./resources/js/event.js");
+
+Echo.join("chat").here(function (users) {
+  console.log("echo.js > chat > here", users);
+  _event__WEBPACK_IMPORTED_MODULE_0__["default"].$emit("users.here", users);
+}).joining(function (user) {
+  console.log("echo.js > chat > joining", user);
+  _event__WEBPACK_IMPORTED_MODULE_0__["default"].$emit("users.joined", user);
+}).leaving(function (user) {
+  console.log("echo.js > chat > leaving", user);
+  _event__WEBPACK_IMPORTED_MODULE_0__["default"].$emit("users.left", user);
+}).listen("MessageCreated", function (data) {
+  console.log("echo.js > chat > MessageCreated", data);
+  _event__WEBPACK_IMPORTED_MODULE_0__["default"].$emit("added_message", data.message);
+});
 
 /***/ }),
 

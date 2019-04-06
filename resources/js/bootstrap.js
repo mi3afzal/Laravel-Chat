@@ -39,6 +39,13 @@ if (token) {
     );
 }
 
+let base_url = document.head.querySelector('meta[name="base-url"]');
+if (base_url) {
+    window.axios.defaults.baseURL = base_url.content;
+} else {
+    console.error("Base Url not found.");
+}
+
 /**
  * Echo exposes an expressive API for subscribing to channels and listening
  * for events that are broadcast by Laravel. Echo and event broadcasting
@@ -55,3 +62,5 @@ window.Echo = new Echo({
     cluster: process.env.MIX_PUSHER_APP_CLUSTER,
     encrypted: true
 });
+
+require("./echo");

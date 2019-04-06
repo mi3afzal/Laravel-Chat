@@ -24,6 +24,9 @@
                 body: null
             }
         },
+        mounted() {
+            console.log('ChatFormComponent mounted.');
+        },
         methods: {
             typing(e) {
                 if(e.keyCode === 13 && !e.shiftKey) {

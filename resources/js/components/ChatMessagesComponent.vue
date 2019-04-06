@@ -19,6 +19,7 @@
             }
         },
         mounted() {
+            console.log('ChatMessagesComponent mounted.');
             axios.get('/message').then((response) => {
                 console.log(response.data);
                 this.messages = response.data;
